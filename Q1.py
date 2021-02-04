@@ -142,11 +142,13 @@ def bfs(start_state, goal_state):
     explored, queue = [], [Node(start_state, None, 0)]
 
     path = []
-
+    
     while queue:
       node = queue.pop(0)
       if node.state != []:
-        print(node.state)
+        path.append(node.state)
+
+        explored.append(node.state)
 
         # add children to queue
         queue = expand(node, queue)
@@ -157,16 +159,11 @@ def bfs(start_state, goal_state):
         if node.state == goal_state:
             return path
 
+        print(len(neighbors))
         for neighbor in neighbors:
-            if neighbor.state not in explored:
-                queue.append(neighbor)
-                explored.append(neighbor.state)
-
-                if neighbor.depth > max_search_depth:
-                    max_search_depth += 1
-
-        if len(queue) > max_frontier_size:
-            max_frontier_size = len(queue)
+          if neighbor.state not in explored:
+            queue.append(neighbor)
+            explored.append(neighbor.state)
 
 
 # Q1 a) - ii) UCS

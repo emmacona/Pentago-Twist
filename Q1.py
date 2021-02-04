@@ -13,28 +13,26 @@ FAIL = False
 max_search_depth = 0
 max_frontier_size = 0
 
+def sort_tuple(tup):  
+  return(sorted(tup, key = lambda x: x[1]))   
 
 def expand(node, queue):
     index = 0
 
     # find 0 in array
     for i in range(6):
-        if node.state[i] == 0:
-            index = i
+      if node.state[i] == 0:
+          index = i
 
     if index == 0:
         # right
         nb1, state1 = right(node.state, index)
         # down
         nb2, state2 = down(node.state, index)
-        if (nb1 < nb2):
-          queue.append(Node(state1, node, node.depth + 1))
-          queue.append(Node(state2, node, node.depth + 1))
-          queue.append(Node([], node, node.depth + 1))
-        else:
-          queue.append(Node(state2, node, node.depth + 1))
-          queue.append(Node(state1, node, node.depth + 1))
-          queue.append(Node([], node, node.depth + 1))
+
+        tup = [(nb1, state1), (nb2, state2)]
+        tup = sort_tuple(tup)
+
     elif index == 1:
         # right
         nb1, state1 = right(node.state, index)
@@ -43,59 +41,27 @@ def expand(node, queue):
         # down
         nb3, state3 = down(node.state, index)
 
-        if max(nb1, nb2, nb3) == nb1:
-            if max(nb2, nb3) == nb2:
-              queue.append(Node(state1, node, node.depth + 1))
-              queue.append(Node(state2, node, node.depth + 1))
-              queue.append(Node(state3, node, node.depth + 1))
-            else:
-              queue.append(Node(state1, node, node.depth + 1))
-              queue.append(Node(state3, node, node.depth + 1))
-              queue.append(Node(state2, node, node.depth + 1))
-        elif max(nb1, nb2, nb3) == nb2:
-            if max(nb1, nb3) == nb1:
-              queue.append(Node(state2, node, node.depth + 1))
-              queue.append(Node(state1, node, node.depth + 1))
-              queue.append(Node(state3, node, node.depth + 1))
-            else:
-              queue.append(Node(state2, node, node.depth + 1))
-              queue.append(Node(state3, node, node.depth + 1))
-              queue.append(Node(state1, node, node.depth + 1))
-        else:
-            if max(nb1, nb2) == nb1:
-              queue.append(Node(state3, node, node.depth + 1))
-              queue.append(Node(state1, node, node.depth + 1))
-              queue.append(Node(state2, node, node.depth + 1))
-            else:
-              queue.append(Node(state3, node, node.depth + 1))
-              queue.append(Node(state2, node, node.depth + 1))
-              queue.append(Node(state1, node, node.depth + 1))
+        tup = [(nb1, state1), (nb2, state2), (nb3, state3)]
+        tup = sort_tuple(tup)
+
     elif index == 2:
         # left
         nb1, state1 = left(node.state, index)
         # down
         nb2, state2 = down(node.state, index)
-        if (nb1 < nb2):
-          queue.append(Node(state1, node, node.depth + 1))
-          queue.append(Node(state2, node, node.depth + 1))
-          queue.append(Node([], node, node.depth + 1))
-        else:
-          queue.append(Node(state2, node, node.depth + 1))
-          queue.append(Node(state1, node, node.depth + 1))
-          queue.append(Node([], node, node.depth + 1))
+
+        tup = [(nb1, state1), (nb2, state2)]
+        tup = sort_tuple(tup)
+
     elif index == 3:
         # right
         nb1, state1 = right(node.state, index)
         # up
         nb2, state2 = up(node.state, index)
-        if (nb1 < nb2):
-          queue.append(Node(state1, node, node.depth + 1))
-          queue.append(Node(state2, node, node.depth + 1))
-          queue.append(Node([], node, node.depth + 1))
-        else:
-          queue.append(Node(state2, node, node.depth + 1))
-          queue.append(Node(state1, node, node.depth + 1))
-          queue.append(Node([], node, node.depth + 1))
+        
+        tup = [(nb1, state1), (nb2, state2)]
+        tup = sort_tuple(tup)
+
     elif index == 4:
         # right
         nb1, state1 = right(node.state, index)
@@ -104,46 +70,28 @@ def expand(node, queue):
         # up
         nb3, state3 = up(node.state, index)
 
-        if max(nb1, nb2, nb3) == nb1:
-            if max(nb2, nb3) == nb2:
-              queue.append(Node(state1, node, node.depth + 1))
-              queue.append(Node(state2, node, node.depth + 1))
-              queue.append(Node(state3, node, node.depth + 1))
-            else:
-              queue.append(Node(state1, node, node.depth + 1))
-              queue.append(Node(state3, node, node.depth + 1))
-              queue.append(Node(state2, node, node.depth + 1))
-        elif max(nb1, nb2, nb3) == nb2:
-            if max(nb1, nb3) == nb1:
-              queue.append(Node(state2, node, node.depth + 1))
-              queue.append(Node(state1, node, node.depth + 1))
-              queue.append(Node(state3, node, node.depth + 1))
-            else:
-              queue.append(Node(state2, node, node.depth + 1))
-              queue.append(Node(state3, node, node.depth + 1))
-              queue.append(Node(state1, node, node.depth + 1))
-        else:
-            if max(nb1, nb2) == nb1:
-              queue.append(Node(state3, node, node.depth + 1))
-              queue.append(Node(state1, node, node.depth + 1))
-              queue.append(Node(state2, node, node.depth + 1))
-            else:
-              queue.append(Node(state3, node, node.depth + 1))
-              queue.append(Node(state2, node, node.depth + 1))
-              queue.append(Node(state1, node, node.depth + 1))
+        tup = [(nb1, state1), (nb2, state2), (nb3, state3)]
+        tup = sort_tuple(tup)
+
     elif index == 5:
       # left
       nb1, state1 = left(node.state, index)
       # up
       nb2, state2 = up(node.state, index)
-      if (nb1 < nb2):
-        queue.append(Node(state1, node, node.depth + 1))
-        queue.append(Node(state2, node, node.depth + 1))
-        queue.append(Node([], node, node.depth + 1))
-      else:
-        queue.append(Node(state2, node, node.depth + 1))
-        queue.append(Node(state1, node, node.depth + 1))
-        queue.append(Node([], node, node.depth + 1))
+        
+      tup = [(nb1, state1), (nb2, state2)]
+      tup = sort_tuple(tup)
+
+    children = [tup[0][1], tup[1][1]]
+    if len(tup) > 2:
+      children.append(tup[2][1])
+    else:
+      children.append([])
+
+    queue.append(Node(children[0], node, node.depth+1))
+    queue.append(Node(children[1], node, node.depth+1))
+    queue.append(Node(children[2], node, node.depth+1))
+
     return queue
 
 def up(state, index):
@@ -234,6 +182,7 @@ def main():
 
     # Question 1 a)i) BFS
     path = bfs(initial_state, goal_state)
+
     # for state in path:
     #   print(state)
 

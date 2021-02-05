@@ -20,16 +20,18 @@ def expand(node, queue):
     index = node.state.index(0)
     moves = []
 
-    if index >= 3: moves.append(Node(up(node.state, index), node, node.depth + 1))
-    if index < 3: moves.append(Node(down(node.state, index), node, node.depth + 1))
-    if index % 3 > 0:  moves.append(Node(left(node.state, index), node, node.depth + 1))
-    if index % 3 < 2: moves.append(Node(right(node.state, index), node, node.depth + 1))
+    if index in [3,4,5]: moves.append((node.state[index-3], Node(up(node.state, index), node, node.depth + 1)))
+    if index in [0,1,2]: moves.append((node.state[index+3], Node(down(node.state, index), node, node.depth + 1)))
+    if index in [1,2,4,5]:  moves.append((node.state[index-1], Node(left(node.state, index), node, node.depth + 1)))
+    if index in [0,1,3,4]: moves.append((node.state[index+1], Node(right(node.state, index), node, node.depth + 1)))
+
+    moves.sort(key=lambda x: x[0])
 
     neighbors = []
 
     for m in moves:
-        if not m.state in queue: 
-            neighbors.append(m)
+        if not m[1].state in queue: 
+            neighbors.append(m[1])
 
     return neighbors
 
@@ -44,7 +46,7 @@ def up(state, index):
 def down(state, index):
   new_state = state.copy()
   temp = new_state[index + 3]
-  new_state[index + board_side] = new_state[index]
+  new_state[index + 3] = new_state[index]
   new_state[index] = temp
   return new_state
 
@@ -101,9 +103,9 @@ def main():
     print("****************************")
     print("BFS")
     path = bfs(initial_state, goal_state)
-    print("Number of moves: ", len(path))
     for p in path:
-        print(p)
+      print(p)
+    print("Number of moves: ", len(path))
 
 
 main()

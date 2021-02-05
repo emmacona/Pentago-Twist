@@ -10,210 +10,81 @@ board_size = 6
 board_side = 3
 SUCCESS = True
 FAIL = False
-max_search_depth = 0
-max_frontier_size = 0
+
+
+def sort_tuple(tup):
+    return(sorted(tup, key=lambda x: x[1]))
 
 
 def expand(node, queue):
-    index = 0
-    a, b, c = [], [], []
-    # find 0 in array
-    for i in range(6):
-        if node.state[i] == 0:
-            index = i
+    index = node.state.index(0)
+    moves = []
 
-    if index == 0:
-        # right
-        nb1, state1 = right(node.state, index)
-        # down
-        nb2, state2 = down(node.state, index)
-        if (nb1 < nb2):
-            a = state1
-            b = state2
-        else:
-            a = state2
-            b = state1
-    if index == 1:
-        # right
-        nb1, state1 = right(node.state, index)
-        # left
-        nb2, state2 = left(node.state, index)
-        # down
-        nb3, state3 = down(node.state, index)
+    if index >= 3: moves.append(Node(up(node.state, index), node, node.depth + 1))
+    if index < 3: moves.append(Node(down(node.state, index), node, node.depth + 1))
+    if index % 3 > 0:  moves.append(Node(left(node.state, index), node, node.depth + 1))
+    if index % 3 < 2: moves.append(Node(right(node.state, index), node, node.depth + 1))
 
-        if max(nb1, nb2, nb3) == nb1:
-            if max(nb2, nb3) == nb2:
-                a = state1
-                b = state2
-                c = state3
-            else:
-                a = state1
-                b = state3
-                c = state2
-        if max(nb1, nb2, nb3) == nb2:
-            if max(nb1, nb3) == nb1:
-                a = state2
-                b = state1
-                c = state3
-            else:
-                a = state2
-                b = state2
-                c = state1
-        if max(nb1, nb2, nb3) == nb3:
-            if max(nb1, nb2) == nb1:
-                a = state3
-                b = state2
-                c = state1
-            else:
-                a = state3
-                b = state2
-                c = state1
-    if index == 2:
-        # left
-        nb1, state1 = left(node.state, index)
-        # down
-        nb2, state2 = down(node.state, index)
-        if (nb1 < nb2):
-            a = state1
-            b = state2
-        else:
-            a = state2
-            b = state1
-    if index == 3:
-        # right
-        nb1, state1 = right(node.state, index)
-        # up
-        nb2, state2 = up(node.state, index)
-        if (nb1 < nb2):
-            a = state1
-            b = state2
-        else:
-            a = state2
-            b = state1
-    if index == 4:
-        # right
-        nb1, state1 = right(node.state, index)
-        # left
-        nb2, state2 = left(node.state, index)
-        # up
-        nb3, state3 = up(node.state, index)
-
-        if max(nb1, nb2, nb3) == nb1:
-            if max(nb2, nb3) == nb2:
-                a = state1
-                b = state2
-                c = state3
-            else:
-                a = state1
-                b = state3
-                c = state2
-        elif max(nb1, nb2, nb3) == nb2:
-            if max(nb1, nb3) == nb1:
-                a = state2
-                b = state1
-                c = state3
-            else:
-                a = state2
-                b = state2
-                c = state1
-        else:
-            if max(nb1, nb2) == nb1:
-                a = state3
-                b = state2
-                c = state1
-            else:
-                a = state3
-                b = state2
-                c = state1
-    if index == 5:
-        # left
-        nb1, state1 = left(node.state, index)
-        # up
-        nb2, state2 = up(node.state, index)
-        if (nb1 < nb2):
-            a = state1
-            b = state2
-        else:
-            a = state2
-            b = state1
-
-    queue.append(Node(a, node, node.depth + 1))
-    queue.append(Node(b, node, node.depth + 1))
-    queue.append(Node(c, node, node.depth + 1))
-
-    return queue
-
-
-def up(new_state, index):
-    temp = new_state[index - 3]
-    new_state[index-3] = new_state[index]
-    new_state[index] = temp
-    return temp, new_state
-
-
-def down(new_state, index):
-    temp = new_state[index + 3]
-    new_state[index + board_side] = new_state[index]
-    new_state[index] = temp
-    return temp, new_state
-
-
-def left(new_state, index):
-    temp = new_state[index - 1]
-    new_state[index - 1] = new_state[index]
-    new_state[index] = temp
-    return temp, new_state
-
-
-def right(new_state, index):
-    temp = new_state[index + 1]
-    new_state[index + 1] = new_state[index]
-    new_state[index] = temp
-    return temp, new_state
-
-
-def get_neighbors(queue, node):
     neighbors = []
-    depth = node.depth
-    for n in queue:
-        if node.depth == depth:
-            neighbors.append(n)
+
+    for m in moves:
+        if not m.state in queue: 
+            neighbors.append(m)
+
     return neighbors
+
+def up(state, index):
+  new_state = state.copy()
+  temp = new_state[index - 3]
+  new_state[index-3] = new_state[index]
+  new_state[index] = temp
+  return new_state
+
+
+def down(state, index):
+  new_state = state.copy()
+  temp = new_state[index + 3]
+  new_state[index + board_side] = new_state[index]
+  new_state[index] = temp
+  return new_state
+
+
+def left(state, index):
+  new_state = state.copy()
+  temp = new_state[index - 1]
+  new_state[index - 1] = new_state[index]
+  new_state[index] = temp
+  return new_state
+
+
+def right(state, index):
+  new_state = state.copy()
+  temp = new_state[index + 1]
+  new_state[index + 1] = new_state[index]
+  new_state[index] = temp
+  return new_state
 
 
 def bfs(start_state, goal_state):
 
-    global max_frontier_size, max_search_depth
-
-    explored, queue = [], [Node(start_state, None, 0)]
-
-    path = []
+    explored, queue = [], deque([Node(start_state, None, 0)])
 
     while queue:
-      node = queue.pop(0)
-      if node.state != []:
+        node = queue.popleft()
         explored.append(node.state)
-        print(node.state)
-
-        # add children to queue
-        queue = expand(node, queue)
-
-        # find neighbours
-        neighbors = get_neighbors(queue, node)
 
         if node.state == goal_state:
-            return path
+            return explored
+
+        # find neighbours
+        neighbors = expand(node, queue)
 
         for neighbor in neighbors:
             if neighbor.state not in explored:
                 queue.append(neighbor)
                 explored.append(neighbor)
-
-                if neighbor.depth > max_search_depth:
-                    max_search_depth += 1
-
-        if len(queue) > max_frontier_size:
-            max_frontier_size = len(queue)
+    
+    return None
 
 
 # Q1 a) - ii) UCS
@@ -225,12 +96,14 @@ def bfs(start_state, goal_state):
 
 def main():
     initial_state = [1, 4, 2, 5, 3, 0]
-    goal_state = [0, 1, 2, 3, 4, 5]
+    goal_state = [0, 1, 2, 5, 4, 3]
 
-    # Question 1 a)i) BFS
+    print("****************************")
+    print("BFS")
     path = bfs(initial_state, goal_state)
-    # for state in path:
-    #   print(state)
+    print("Number of moves: ", len(path))
+    for p in path:
+        print(p)
 
 
 main()

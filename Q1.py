@@ -85,13 +85,13 @@ def expand(node, queue):
     children = [tup[0][1], tup[1][1]]
     if len(tup) > 2:
       children.append(tup[2][1])
+      queue.append(Node(children[0], node.depth+1))
+      queue.append(Node(children[1], node.depth+1))
+      queue.append(Node(children[2], node.depth+1))
     else:
-      children.append([])
-
-    queue.append(Node(children[0], node, node.depth+1))
-    queue.append(Node(children[1], node, node.depth+1))
-    queue.append(Node(children[2], node, node.depth+1))
-
+      queue.append(Node(children[0], node.depth+1))
+      queue.append(Node(children[1], node.depth+1))
+    
     return queue
 
 def up(state, index):
@@ -139,31 +139,30 @@ def bfs(start_state, goal_state):
 
     global max_frontier_size, max_search_depth
 
-    explored, queue = [], [Node(start_state, None, 0)]
+    explored, queue = [], []
+    node = Node(start_state, 0)
+    queue.append(node)
+    explored.append(node.state)
 
     path = []
     
     while queue:
       node = queue.pop(0)
-      if node.state != []:
-        path.append(node.state)
+      explored.append(node.state)
 
-        explored.append(node.state)
+      # add children to queue
+      queue = expand(node, queue)
 
-        # add children to queue
-        queue = expand(node, queue)
+      # find all nodes at this level
+      neighbors = get_neighbors(queue, node)
 
-        # find all nodes at this level
-        neighbors = get_neighbors(queue, node)
+      if node.state == goal_state:
+          return path
 
-        if node.state == goal_state:
-            return path
-
-        print(len(neighbors))
-        for neighbor in neighbors:
-          if neighbor.state not in explored:
-            queue.append(neighbor)
-            explored.append(neighbor.state)
+      for neighbor in neighbors:
+        if neighbor.state not in explored:
+          queue.append(neighbor)
+          explored.append(neighbor.state)
 
 
 # Q1 a) - ii) UCS

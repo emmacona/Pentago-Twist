@@ -147,6 +147,7 @@ def hill_climbing(random_selection, nb_cities):
   # for each instance
   for tour in random_selection:
     l = tour_length(tour)
+    result['lengths'].append(l)
     best_neighbours = get_best_swap(tour, nb_cities)
     best_length = tour_length(best_neighbours)
 
@@ -155,6 +156,7 @@ def hill_climbing(random_selection, nb_cities):
       l = best_length
       best_neighbours = get_best_swap(tour, nb_cities)
       best_length = tour_length(best_neighbours)
+      result['lengths'].append(best_length)
       if (best_length <= l):
         break
     
@@ -162,8 +164,6 @@ def hill_climbing(random_selection, nb_cities):
       nb_optimal += 1
 
     index += 1
-
-    result['lengths'].append(best_length)
 
   mean = statistics.mean(result['lengths'])
   sd = statistics.stdev(result['lengths'])

@@ -9,9 +9,37 @@ board_size = 6
 board_side = 3
 SUCCESS = True
 FAIL = False
+level = 0
 
 
 def expand(node, queue):
+
+    global level
+
+    index = node.index(0)
+    moves = []
+
+    if index in [3,4,5]: moves.append((node[index-board_side], up(node, index)))
+    if index in [0,1,2]: moves.append((node[index+board_side], down(node, index)))
+    if index in [1,2,4,5]:  moves.append((node[index-1], left(node, index)))
+    if index in [0,1,3,4]: moves.append((node[index+1], right(node, index)))
+
+    moves.sort(key=lambda x: x[0])
+
+    neighbors = []
+
+    level += 1
+
+    for m in moves:
+        if not m[1] in queue: 
+            neighbors.append(m[1])
+
+    return neighbors
+
+def expand_with_level(node_tuple, queue):
+
+    node = node_tuple[1]
+
     index = node.index(0)
     moves = []
 
@@ -26,7 +54,7 @@ def expand(node, queue):
 
     for m in moves:
         if not m[1] in queue: 
-            neighbors.append(m[1])
+            neighbors.append((node_tuple[0] + 1, m[1]))
 
     return neighbors
 
@@ -64,90 +92,133 @@ def right(state, index):
 
 def bfs(start_state, goal_state):
 
-    explored, queue = [], deque([start_state])
+    global level
+
+    explored, queue = [], deque([(0, start_state)])
 
     while queue:
         node = queue.popleft()
-        explored.append(node)
+        explored.append(node[1])
 
-        if node == goal_state:
-            return explored
+        if node[1] == goal_state:
+            return node[0], explored
 
         # find neighbours
-        neighbors = expand(node, queue)
+        neighbors = expand_with_level(node, queue)
 
         for neighbor in neighbors:
-            if neighbor not in explored:
+            if neighbor[1] not in explored:
                 queue.append(neighbor)
-                explored.append(neighbor)
+                explored.append(neighbor[1])
     
-    return None
+    return 0, None
 
 
 # Q1 a) - ii) UCS
+def uniform_cost(start_state, goal_state):
+    # Since the cost are all the same, it will be the same as BFS
+    return(bfs(start_state, goal_state))
+
 
 # Q1 a) - iii) DFS
 
 def dfs(start_state, goal_state):
 
-    explored, queue = [], deque([start_state])
+    explored, queue = [], deque([(0, start_state)])
 
     while queue:
+
         node = queue.pop()
 
-        if node == goal_state:
-            return explored
+        if node[1] == goal_state:
+            return node[0], explored
 
         # find neighbours
-        neighbors = expand(node, queue)
+        neighbors = expand_with_level(node, queue)
         neighbors.reverse()
 
         for neighbor in neighbors:
-            if neighbor not in explored:
+            if neighbor[1] not in explored:
                 queue.append(neighbor)
-                explored.append(neighbor)
+                explored.append(neighbor[1])
     
-    return None
+    return 0, None
 
-# Q1 a) - iv) Iterative deepening
-def iterative_deepening(start_state, goal_state, iteration):
 
-    explored, queue = [], deque([start_state])
+def depth_limited_search(state, goal, limit):
+    explored, queue = [], deque([(0, state)])
 
-    while queue:
-        node = queue.popleft()
-        explored.append(node)
+    while queue and limit > 0:
+        limit -= 1
 
-        if node == goal_state:
-            return explored
+        node = queue.pop()
+
+        if node[1] == goal:
+            return node[0], explored
 
         # find neighbours
-        neighbors = expand(node, queue)
+        neighbors = expand_with_level(node, queue)
+        neighbors.reverse()
 
         for neighbor in neighbors:
-            if neighbor not in explored:
+            if neighbor[1] not in explored:
                 queue.append(neighbor)
-                explored.append(neighbor)
+                explored.append(neighbor[1])
     
-    return None
+    return 0, None
+
+
+
+# Q1 a) - iv) Iterative deepening
+def iterative_deepening(start_state, goal_state, max_depth):
+    bound = 1
+
+    while bound <= max_depth:
+        depth, solution = depth_limited_search(start_state, goal_state, bound)
+        if (solution != None):
+            return depth, solution
+        bound += 1
+    
+    return 0, None
+
 
 def main():
     initial_state = [1, 4, 2, 5, 3, 0]
     goal_state = [0, 1, 2, 5, 4, 3]
 
     print("****************************")
-    print("BFS")
-    path = bfs(initial_state, goal_state)
+    print("Breadth first search")
+    depth, path = bfs(initial_state, goal_state)
     for p in path:
       print(p)
-    print("Number of moves: ", len(path))
+    print("Number of states explored: ", len(path))
+    print("Solution path length: ", depth)
 
-    print("****************************")
-    print("DFS")
-    path = dfs(initial_state, goal_state)
+    print("\n****************************")
+    print("Uniform Cost Search")
+    depth, path = bfs(initial_state, goal_state)
     for p in path:
       print(p)
-    print("Number of moves: ", len(path))
+    print("Number of states explored: ", len(path))
+    print("Solution path length: ", depth)
 
+    print("\n****************************")
+    print("Depth first search")
+    depth, path = dfs(initial_state, goal_state)
+    for p in path:
+      print(p)
+    print("Number of states explored: ", len(path))
+    print("Solution path length: ", depth)
+
+    print("\n****************************")
+    print("Iterative deepening search")
+    depth, path = iterative_deepening(initial_state, goal_state, 300)
+    if path == None: 
+        print("Solution not found in", 300, "levels")
+    else:
+        for p in path:
+            print(p)
+        print("Number of states explored: ", len(path))
+        print("Solution path length: ", depth)
 
 main()

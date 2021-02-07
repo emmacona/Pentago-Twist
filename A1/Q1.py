@@ -1,5 +1,12 @@
-# Modified code from : Stathis P.
-# Source : https://github.com/speix/8-puzzle-solver/blob/36b10ff3eab68d26d29f9a4c38db497a899e1eca/driver.py#L201
+# COMP 424 - Assignment #1 (Winter 20201)
+# Emmanuelle Coutu-Nadeau
+# ID: 260681550
+#
+#
+# References : 
+# https://github.com/speix/8-puzzle-solver/blob/36b10ff3eab68d26d29f9a4c38db497a899e1eca/driver.py#L201
+# https://gist.github.com/Kautenja/72cd5494adc12dcbfeea3e79e7b3c3ac
+
 
 from collections import deque
 from heapq import heappush, heappop, heapify
@@ -7,8 +14,6 @@ import itertools
 
 board_size = 6
 board_side = 3
-SUCCESS = True
-FAIL = False
 level = 0
 
 
@@ -19,8 +24,8 @@ def expand(node, queue):
     index = node.index(0)
     moves = []
 
-    if index in [3,4,5]: moves.append((node[index-board_side], up(node, index)))
     if index in [0,1,2]: moves.append((node[index+board_side], down(node, index)))
+    if index in [3,4,5]: moves.append((node[index-board_side], up(node, index)))
     if index in [1,2,4,5]:  moves.append((node[index-1], left(node, index)))
     if index in [0,1,3,4]: moves.append((node[index+1], right(node, index)))
 
@@ -43,8 +48,8 @@ def expand_with_level(node_tuple, queue):
     index = node.index(0)
     moves = []
 
-    if index in [3,4,5]: moves.append((node[index-board_side], up(node, index)))
     if index in [0,1,2]: moves.append((node[index+board_side], down(node, index)))
+    if index in [3,4,5]: moves.append((node[index-board_side], up(node, index)))
     if index in [1,2,4,5]:  moves.append((node[index-1], left(node, index)))
     if index in [0,1,3,4]: moves.append((node[index+1], right(node, index)))
 

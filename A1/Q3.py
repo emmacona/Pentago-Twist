@@ -1,10 +1,18 @@
+# COMP 424 - Assignment #1 (Winter 20201)
+# Emmanuelle Coutu-Nadeau
+# ID: 260681550
+#
+# References:
+# https://en.wikipedia.org/wiki/2-opt#:~:text=In%20optimization%2C%202%2Dopt%20is,already%20been%20suggested%20by%20Flood
+# https://towardsdatascience.com/how-to-implement-the-hill-climbing-algorithm-in-python-1c65c29469de
+
 import random
 import math
 import statistics 
 from itertools import permutations 
 from itertools import combinations 
 
-optimal_paths = []
+optimal_paths = 0
 random_paths = []
 
 def nCr(n,r):
@@ -39,7 +47,6 @@ def brute_TSP (data):
   global optimal_paths
   result = {}
   best_length = 0
-  best_path = []
   result['lengths'] = []
   # for each instance
   for tsp in data:
@@ -49,14 +56,14 @@ def brute_TSP (data):
       l = tour_length(tour)
       if (best_length < l or best_length == 0):
         best_length = l
-        best_path = tour
       result['lengths'].append(l)
-    optimal_paths.append(best_length)
 
   mean = statistics.mean(result['lengths'])
   sd = statistics.stdev(result['lengths'])
   max_length = max(result['lengths'])
   min_length = min(result['lengths'])
+
+  optimal_paths = min_length
 
   result['mean'] = mean
   result['min'] = min_length
@@ -77,9 +84,9 @@ def random_path_selection(data):
     tour = data[i]
     random_paths.append(tour)
     l = tour_length(tour)
-    if (l == optimal_paths[i]):
-      nb_optimal += 1
     result['lengths'].append(l)
+    if (l == optimal_paths):
+      nb_optimal += 1
 
   mean = statistics.mean(result['lengths'])
   sd = statistics.stdev(result['lengths'])
@@ -149,9 +156,10 @@ def hill_climbing(random_selection, nb_cities):
       best_neighbours = get_best_swap(tour, nb_cities)
       best_length = tour_length(best_neighbours)
       if (best_length <= l):
-        if (best_length == optimal_paths[index]):
-          nb_optimal += 1
-          break
+        break
+    
+    if (best_length == optimal_paths):
+      nb_optimal += 1
 
     index += 1
 
@@ -214,7 +222,6 @@ def main():
   print("Max: ", res4['max'])
   print("Min: ", res4['min'])
   print("SD: ", res4['sd'])
-  print("# optimal: ", nb_optimal)
   print('\n')
 
 main()

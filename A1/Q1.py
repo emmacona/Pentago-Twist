@@ -109,15 +109,33 @@ def bfs(start_state, goal_state):
         for neighbor in neighbors:
             if neighbor[1] not in explored:
                 queue.append(neighbor)
-                explored.append(neighbor[1])
     
     return 0, None
 
 
 # Q1 a) - ii) UCS
 def uniform_cost(start_state, goal_state):
-    # Since the cost are all the same, it will be the same as BFS
-    return(bfs(start_state, goal_state))
+    global level
+
+    explored, queue = [], deque([(0, start_state)])
+
+    while queue:
+        node = queue.popleft()
+        explored.append(node[1])
+
+        if node[1] == goal_state:
+            # The cost is the level of the node, since all transitions have unit costs
+            # otherwise, we would need to update the (level, state) node tuples to (level*tile_number, state)
+            return node[1], explored 
+
+        # find neighbours
+        neighbors = expand_with_level(node, queue)
+
+        for neighbor in neighbors:
+            if neighbor[1] not in explored:
+                queue.append(neighbor)
+    
+    return 0, None
 
 
 # Q1 a) - iii) DFS
@@ -125,10 +143,11 @@ def uniform_cost(start_state, goal_state):
 def dfs(start_state, goal_state):
 
     explored, queue = [], deque([(0, start_state)])
-
+    depth = 1
     while queue:
 
         node = queue.pop()
+        explored.append(node[1])
 
         if node[1] == goal_state:
             return node[0], explored
@@ -140,7 +159,8 @@ def dfs(start_state, goal_state):
         for neighbor in neighbors:
             if neighbor[1] not in explored:
                 queue.append(neighbor)
-                explored.append(neighbor[1])
+                
+    depth += 1  
     
     return 0, None
 
@@ -148,10 +168,10 @@ def dfs(start_state, goal_state):
 def depth_limited_search(state, goal, limit):
     explored, queue = [], deque([(0, state)])
 
-    while queue and limit > 0:
-        limit -= 1
+    while queue:
 
         node = queue.pop()
+        explored.append(node[1])
 
         if node[1] == goal:
             return node[0], explored
@@ -160,10 +180,11 @@ def depth_limited_search(state, goal, limit):
         neighbors = expand_with_level(node, queue)
         neighbors.reverse()
 
-        for neighbor in neighbors:
-            if neighbor[1] not in explored:
-                queue.append(neighbor)
-                explored.append(neighbor[1])
+        if (neighbors[0][0] <= limit):
+            for neighbor in neighbors:
+                if neighbor[1] not in explored:
+                    queue.append(neighbor) 
+                    explored.append(neighbor[1])     
     
     return 0, None
 
@@ -192,15 +213,15 @@ def main():
     for p in path:
       print(p)
     print("Number of states explored: ", len(path))
-    print("Solution path length: ", depth)
+    print("Solution path length (depth): ", depth)
 
     print("\n****************************")
     print("Uniform Cost Search")
-    depth, path = bfs(initial_state, goal_state)
+    depth, path = uniform_cost(initial_state, goal_state)
     for p in path:
       print(p)
     print("Number of states explored: ", len(path))
-    print("Solution path length: ", depth)
+    print("Solution path length (depth): ", depth)
 
     print("\n****************************")
     print("Depth first search")
@@ -208,7 +229,7 @@ def main():
     for p in path:
       print(p)
     print("Number of states explored: ", len(path))
-    print("Solution path length: ", depth)
+    print("Solution path length (depth): ", depth)
 
     print("\n****************************")
     print("Iterative deepening search")
@@ -219,6 +240,6 @@ def main():
         for p in path:
             print(p)
         print("Number of states explored: ", len(path))
-        print("Solution path length: ", depth)
+        print("Solution path length (depth): ", depth)
 
 main()

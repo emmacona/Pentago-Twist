@@ -93,29 +93,6 @@ def random_path_selection(data):
   return nb_optimal, result
 
 # Question 3 c) Hill climbing
-# def get_neighbours(path, combination_range):   
-#   neighbours = []
-#   swaps = combinations(range(combination_range), 2)
-#   for s in swaps:
-#       neighbour = path
-#       pos1, pos2 = s[0], s[1]
-#       neighbour[pos1][0] = path[pos2][0]
-#       neighbour[pos1][1] = path[pos2][1]
-#       neighbour[pos2][0] = path[pos1][0]
-#       neighbour[pos2][1] = path[pos1][1]
-#       neighbours.append(neighbour)
-#   return neighbours
-
-# def get_best_neighbours(graph, neighbours, l):
-#   best_length = l
-#   best_neighbours = neighbours
-#   for n in neighbours:
-#     current_length = tour_length(n)
-#     if (current_length < best_length and current_length != 0):
-#       best_length = current_length
-#       best_neighbours = n
-#   return best_length, best_neighbours
-
 def extract_from_list(list, range):
   sublist = list[range[0], range[1]+1]
   return sublist

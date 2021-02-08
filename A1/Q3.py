@@ -12,7 +12,7 @@ import statistics
 from itertools import permutations 
 from itertools import combinations 
 
-optimal_paths = 0
+optimal_paths = []
 random_paths = []
 
 def nCr(n,r):
@@ -54,16 +54,15 @@ def brute_TSP (data):
     perm = permutations(tsp) 
     for tour in perm:
       l = tour_length(tour)
-      if (best_length < l or best_length == 0):
+      if (best_length > l or best_length == 0):
         best_length = l
-      result['lengths'].append(l)
+    result['lengths'].append(best_length)
+    optimal_paths.append(best_length)
 
   mean = statistics.mean(result['lengths'])
   sd = statistics.stdev(result['lengths'])
   max_length = max(result['lengths'])
   min_length = min(result['lengths'])
-
-  optimal_paths = min_length
 
   result['mean'] = mean
   result['min'] = min_length
@@ -85,7 +84,7 @@ def random_path_selection(data):
     random_paths.append(tour)
     l = tour_length(tour)
     result['lengths'].append(l)
-    if (l == optimal_paths):
+    if (l in optimal_paths):
       nb_optimal += 1
 
   mean = statistics.mean(result['lengths'])
@@ -147,7 +146,6 @@ def hill_climbing(random_selection, nb_cities):
   # for each instance
   for tour in random_selection:
     l = tour_length(tour)
-    result['lengths'].append(l)
     best_neighbours = get_best_swap(tour, nb_cities)
     best_length = tour_length(best_neighbours)
 
@@ -156,12 +154,13 @@ def hill_climbing(random_selection, nb_cities):
       l = best_length
       best_neighbours = get_best_swap(tour, nb_cities)
       best_length = tour_length(best_neighbours)
-      result['lengths'].append(best_length)
-      if (best_length <= l):
-        break
+      # if (best_length <= l):
+      #   break
     
-    if (best_length == optimal_paths):
-      nb_optimal += 1
+      if (best_length in optimal_paths):
+        nb_optimal += 1
+
+    result['lengths'].append(best_length)
 
     index += 1
 
@@ -186,7 +185,7 @@ def main():
 
   # Results for Question 3 a)
   res1 = brute_TSP(instances)
-  print("Q3 A)")
+  print("7 cities optimal")
   print("Mean: ",res1['mean'])
   print("Max: ",res1['max'])
   print("Min: ",res1['min'])
@@ -195,7 +194,7 @@ def main():
 
   # Results for Question 3 b)
   nb_optimal, res2 = random_path_selection(instances)
-  print("Q3 B)")
+  print("7 cities - random paths")
   print("Mean: ", res2['mean'])
   print("Max: ", res2['max'])
   print("Min: ", res2['min'])
@@ -205,7 +204,7 @@ def main():
 
   # Results for Question 3 c)
   nb_optimal, res3 = hill_climbing(random_paths, 7)
-  print("Q3 C)")
+  print("7 cities - Hill climbing")
   print("Mean: ", res3['mean'])
   print("Max: ", res3['max'])
   print("Min: ", res3['min'])
@@ -215,13 +214,23 @@ def main():
 
   # Results for Question 3 d)
   instances_scaledup = generate_tsp_data(100, 100)
+  random_paths = [] #reset random_paths
 
-  nb_optimal, res4 = hill_climbing(instances_scaledup, 100)
-  print("Q3 D) - Hill climbing")
+  nb_optimal, res4 = random_path_selection(instances_scaledup)
+  print("100 cities - random paths")
   print("Mean: ", res4['mean'])
   print("Max: ", res4['max'])
   print("Min: ", res4['min'])
   print("SD: ", res4['sd'])
+  print("# optimal: ", nb_optimal)
+  print('\n')
+
+  nb_optimal, res5 = hill_climbing(random_paths, 100)
+  print("100 cities - Hill climbing")
+  print("Mean: ", res5['mean'])
+  print("Max: ", res5['max'])
+  print("Min: ", res5['min'])
+  print("SD: ", res5['sd'])
   print('\n')
 
 main()

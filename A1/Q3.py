@@ -37,10 +37,14 @@ def dist (p1, p2):
 
 def tour_length(tour):
   l = 0
+  first = tour[0]
+  last = []
   p1 = tour[0] # start with the first city
   for city in tour:
     l += dist(p1, city)
     p1 = city
+    last = city
+  l += dist(last, first) # + distance to come back to starting point
   return l
 
 def brute_TSP (data):

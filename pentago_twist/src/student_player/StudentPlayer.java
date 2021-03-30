@@ -23,6 +23,9 @@ public class StudentPlayer extends PentagoPlayer {
      * make decisions.
      */
     public Move chooseMove(PentagoBoardState boardState) {
+        // Clone PBS
+        PentagoBoardState pbs = (PentagoBoardState) boardState.clone();
+
         // You probably will make separate functions in MyTools.
         // For example, maybe you'll need to load some pre-processed best opening
         // strategies...

@@ -7,6 +7,7 @@ import pentago_twist.PentagoMove;
 
 public class MyTools {
     public Move playCenter(PentagoBoardState boardState, int playerId){
+      
         // for the first rounds, place piece in the centers
         PentagoCoord c1 = new PentagoCoord(1, 1);
         PentagoCoord c2 = new PentagoCoord(4, 1);
@@ -17,13 +18,13 @@ public class MyTools {
         if(boardState.isPlaceLegal(c1)){
           myMove = new PentagoMove(c1, 1, 0, playerId);
         }
-        if(boardState.isPlaceLegal(c2)){
+        else if(boardState.isPlaceLegal(c2)){
           myMove = new PentagoMove(c2, 1, 0, playerId);
         }
-        if(boardState.isPlaceLegal(c3)){
+        else if(boardState.isPlaceLegal(c3)){
           myMove = new PentagoMove(c3, 1, 0, playerId);
         }
-        if(boardState.isPlaceLegal(c4)){
+        else if(boardState.isPlaceLegal(c4)){
           myMove = new PentagoMove(c4, 1, 0, playerId);
         }
         return myMove;

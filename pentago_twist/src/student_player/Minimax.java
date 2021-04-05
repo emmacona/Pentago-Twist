@@ -47,7 +47,7 @@ public class Minimax {
     PentagoBoardState clonedBoardState;
     Move move;
 
-    if (depth == 5 || boardState.gameOver()) {
+    if (depth == 10 || boardState.gameOver()) {
 			int value = minimaxValue(boardState);
 			return new Move(value);
 		}

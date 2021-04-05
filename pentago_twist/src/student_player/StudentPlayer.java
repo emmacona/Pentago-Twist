@@ -23,11 +23,13 @@ public class StudentPlayer extends PentagoPlayer {
      */
     public Move chooseMove(PentagoBoardState boardState) {
         Minimax minimax = new Minimax();
-        StaticStrategy ss = new StaticStrategy();
+        MyTools myTools = new MyTools();
         PentagoBoardState pbs = (PentagoBoardState) boardState.clone();
         Move myMove;
-        if(pbs.getTurnNumber() < 3) {
-            myMove = ss.playCenter(boardState, this.player_id);
+        int turn_nb = pbs.getTurnNumber();
+        System.out.println(turn_nb);
+        if(turn_nb < 3) {
+            myMove = myTools.playCenter(boardState, this.player_id);
         }
         else {
             

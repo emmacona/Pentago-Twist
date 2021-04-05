@@ -1,7 +1,6 @@
 package student_player;
 
 import boardgame.Move;
-
 import pentago_twist.PentagoPlayer;
 import pentago_twist.PentagoBoardState;
 
@@ -23,16 +22,17 @@ public class StudentPlayer extends PentagoPlayer {
      * make decisions.
      */
     public Move chooseMove(PentagoBoardState boardState) {
-        // Clone PBS
+        Minimax minimax = new Minimax();
+        StaticStrategy ss = new StaticStrategy();
         PentagoBoardState pbs = (PentagoBoardState) boardState.clone();
-
-        // You probably will make separate functions in MyTools.
-        // For example, maybe you'll need to load some pre-processed best opening
-        // strategies...
-        MyTools.getSomething();
-
-        // Is random the best you can do?
-        Move myMove = boardState.getRandomMove();
+        Move myMove;
+        if(pbs.getTurnNumber() < 3) {
+            myMove = ss.playCenter(boardState, this.player_id);
+        }
+        else {
+            
+            myMove = minimax.alphaBetaPruning(boardState);
+        }
 
         // Return your move to be processed by the server.
         return myMove;

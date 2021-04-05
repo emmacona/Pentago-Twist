@@ -2,12 +2,16 @@ package student_player;
 
 import java.util.ArrayList;
 
+import boardgame.Board;
 import pentago_twist.PentagoBoardState;
 import pentago_twist.PentagoMove;
 
 public class Minimax {
   private int alpha = -Integer.MAX_VALUE; // At max nodes, update α only
   private int beta = Integer.MAX_VALUE; // At min nodes, update β only
+  private int WIN = 10;
+  private int DRAW = 5;
+  private int LOSE = 0;
 
   private class Move {	
       private int value;
@@ -25,10 +29,6 @@ public class Minimax {
         return this.pentagoMove;
       }
       
-      public void setValue(int value) {
-        this.value = value;
-      }
-      
       public void setPentagoMove(PentagoMove pentagoMove) {
         this.pentagoMove = pentagoMove;
       }
@@ -37,18 +37,18 @@ public class Minimax {
    public PentagoMove alphaBetaPruning(PentagoBoardState boardState){
       boolean isMaximize = true;
 
-      Move bestMove = minimax(boardState, 5, isMaximize, alpha, beta);
+      Move bestMove = minimaxDecision(boardState, 0, isMaximize, alpha, beta);
 
       return bestMove.getPentagoMove();
    }
 
-   public Move minimax(PentagoBoardState boardState, int depth, boolean isMaximize, int alpha, int beta){
+   public Move minimaxDecision(PentagoBoardState boardState, int depth, boolean isMaximize, int alpha, int beta){
     ArrayList<PentagoMove> allMoves = boardState.getAllLegalMoves();
     PentagoBoardState clonedBoardState;
     Move move;
 
-    if (depth == 10 || boardState.gameOver()) {
-			int value = getUtility(boardState);
+    if (depth == 5 || boardState.gameOver()) {
+			int value = minimaxValue(boardState);
 			return new Move(value);
 		}
 
@@ -57,7 +57,7 @@ public class Minimax {
       for (PentagoMove pentagoMove : allMoves) {    
         clonedBoardState = (PentagoBoardState) boardState.clone();
         clonedBoardState.processMove(pentagoMove);
-        move = minimax(clonedBoardState, depth+1, false, alpha, beta);
+        move = minimaxDecision(clonedBoardState, depth+1, false, alpha, beta);
 
         // Update bestMove
         if(bestMove.getValue() < move.getValue()){
@@ -81,7 +81,7 @@ public class Minimax {
       for (PentagoMove pentagoMove : allMoves) {    
         clonedBoardState = (PentagoBoardState) boardState.clone();
         clonedBoardState.processMove(pentagoMove);
-        move = minimax(clonedBoardState, depth+1, false, alpha, beta);
+        move = minimaxDecision(clonedBoardState, depth+1, false, alpha, beta);
 
         // Update bestMove
         if(bestMove.getValue() > move.getValue()){
@@ -102,11 +102,20 @@ public class Minimax {
    }
   }
 
-  public int getUtility(PentagoBoardState boardState){
+  public int minimaxValue(PentagoBoardState boardState){
     int player = boardState.getTurnPlayer();
-
-    
-
+    if (boardState.gameOver()) {
+			if (boardState.getWinner() == player) {
+				return WIN;
+			}
+			else if (boardState.getWinner() == Board.DRAW) {
+				return DRAW;
+			}
+			else {
+				return LOSE;
+				}
+		}
     return 0;
   }
+
 }

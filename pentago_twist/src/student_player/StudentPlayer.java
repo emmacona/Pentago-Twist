@@ -22,18 +22,19 @@ public class StudentPlayer extends PentagoPlayer {
      * make decisions.
      */
     public Move chooseMove(PentagoBoardState boardState) {
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + 1800; // maximum 1800 ms to find a move
         Minimax minimax = new Minimax();
         MyTools myTools = new MyTools();
         PentagoBoardState pbs = (PentagoBoardState) boardState.clone();
         Move myMove;
         int turn_nb = pbs.getTurnNumber();
-        System.out.println(turn_nb);
-        if(turn_nb < 3) {
+        System.out.println("///////////// STUDENT PLAYING ////////////////");
+        if(turn_nb < 4) {
             myMove = myTools.playCenter(boardState, this.player_id);
         }
         else {
-            
-            myMove = minimax.alphaBetaPruning(boardState);
+            myMove = minimax.alphaBetaPruning(boardState, endTime);
         }
 
         // Return your move to be processed by the server.
